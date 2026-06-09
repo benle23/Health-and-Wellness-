@@ -1,17 +1,18 @@
 {
-  "name": "still-health-tracker",
+  "name": "nourish-health-tracker",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "concurrently -k \"npm:dev:server\" \"npm:dev:client\"",
-    "dev:server": "nodemon server.js",
+    "dev:server": "nodemon server/index.js",
     "dev:client": "vite",
     "build": "vite build",
-    "start": "node server.js"
+    "start": "node server/index.js"
   },
   "dependencies": {
     "better-sqlite3": "^11.10.0",
+    "cors": "^2.8.5",
     "express": "^4.21.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

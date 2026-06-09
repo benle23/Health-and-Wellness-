@@ -1,184 +1,107 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  createEntry,
-  getEntries,
-  getSettings,
-  getWeights,
-  removeEntry,
-  saveSettings,
-  saveWeight,
-} from "./api";
-import { getWeekDates, toDateKey } from "./date";
-import FoodSearchModal from "./components/FoodSearchModal";
-import MainGrid from "./components/MainGrid";
-import SettingsDrawer from "./components/SettingsDrawer";
-import Sidebar from "./components/Sidebar";
+import { useMemo, useState } from "react";
+import DailySummary from "@/components/DailySummary";
+import MealSection from "@/components/MealSection";
+import SettingsDrawer from "@/components/SettingsDrawer";
+import Sidebar from "@/components/Sidebar";
+import WaterWidget from "@/components/WaterWidget";
+import WeekChart from "@/components/WeekChart";
+import { useDashboard } from "@/context/DashboardContext";
+import "@/styles/App.css";
 
-const defaultSettings = {
-  calorie_goal: 2000,
-  protein_target: 140,
-  carbs_target: 220,
-  fat_target: 65,
-};
+const meals = ["Breakfast", "Lunch", "Dinner", "Snacks"];
 
 function App() {
-  const [entries, setEntries] = useState([]);
-  const [settings, setSettings] = useState(defaultSettings);
-  const [weeklyData, setWeeklyData] = useState([]);
-  const [weights, setWeights] = useState([]);
-  const [foodModalOpen, setFoodModalOpen] = useState(false);
+  const { date, entries, settings, water, loading, error, toast, moveDate, setDate, setError } =
+    useDashboard();
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
-  const today = toDateKey();
-
-  const loadDashboard = useCallback(async () => {
-    try {
-      setError("");
-      const dates = getWeekDates();
-      const [todayEntries, savedSettings, weightHistory, ...weekEntries] =
-        await Promise.all([
-          getEntries(today),
-          getSettings(),
-          getWeights(14),
-          ...dates.map((date) => getEntries(date)),
-        ]);
-
-      setEntries(todayEntries);
-      setSettings({ ...defaultSettings, ...savedSettings });
-      setWeights(weightHistory);
-      setWeeklyData(
-        dates.map((date, index) => ({
-          date,
-          calories: weekEntries[index].reduce(
-            (total, entry) => total + entry.calories,
-            0,
-          ),
-        })),
-      );
-    } catch (loadError) {
-      setError(loadError.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [today]);
-
-  useEffect(() => {
-    loadDashboard();
-  }, [loadDashboard]);
 
   const totals = useMemo(
     () =>
       entries.reduce(
-        (summary, entry) => ({
-          calories: summary.calories + entry.calories,
-          protein: summary.protein + entry.protein_total,
-          carbs: summary.carbs + entry.carbs_total,
-          fat: summary.fat + entry.fat_total,
+        (sum, entry) => ({
+          calories: sum.calories + entry.calories,
+          protein: sum.protein + entry.protein,
+          carbs: sum.carbs + entry.carbs,
+          fat: sum.fat + entry.fat,
         }),
         { calories: 0, protein: 0, carbs: 0, fat: 0 },
       ),
     [entries],
   );
 
-  const handleLogEntry = async (entry) => {
-    try {
-      setError("");
-      const createdEntry = await createEntry({
-        ...entry,
-        logged_at: `${today}T12:00:00.000Z`,
-      });
-      setEntries((current) => [...current, createdEntry]);
-      setWeeklyData((current) =>
-        current.map((day) =>
-          day.date === today
-            ? { ...day, calories: day.calories + createdEntry.calories }
-            : day,
-        ),
-      );
-      setFoodModalOpen(false);
-    } catch (entryError) {
-      setError(entryError.message);
-    }
-  };
-
-  const handleDeleteEntry = async (id) => {
-    try {
-      setError("");
-      await removeEntry(id);
-      await loadDashboard();
-    } catch (deleteError) {
-      setError(deleteError.message);
-    }
-  };
-
-  const handleSaveSettings = async (nextSettings) => {
-    try {
-      setError("");
-      const saved = await saveSettings(nextSettings);
-      setSettings(saved);
-      setSettingsOpen(false);
-    } catch (settingsError) {
-      setError(settingsError.message);
-    }
-  };
-
-  const handleSaveWeight = async (weight) => {
-    try {
-      setError("");
-      await saveWeight({ weight_kg: weight, logged_at: today });
-      setWeights(await getWeights(14));
-    } catch (weightError) {
-      setError(weightError.message);
-    }
-  };
-
-  const openFoodModal = () => {
-    setSettingsOpen(false);
-    setFoodModalOpen(true);
-  };
-
-  const openSettings = () => {
-    setFoodModalOpen(false);
-    setSettingsOpen(true);
-  };
+  const selectedDate = new Date(`${date}T12:00:00`);
+  const isToday = date === new Date().toLocaleDateString("en-CA");
+  const dateLabel = `${isToday ? "Today, " : ""}${selectedDate.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "short",
+    day: "numeric",
+  })}`;
 
   return (
     <div className="app-shell">
       <Sidebar
         totals={totals}
         settings={settings}
-        onLogFood={openFoodModal}
-        onOpenSettings={openSettings}
+        onToday={() => setDate(new Date().toLocaleDateString("en-CA"))}
+        onHistory={() => moveDate(-1)}
+        onSettings={() => setSettingsOpen((open) => !open)}
       />
-      <MainGrid
-        entries={entries}
-        loading={loading}
-        totals={totals}
-        settings={settings}
-        weeklyData={weeklyData}
-        onDeleteEntry={handleDeleteEntry}
-        onLogFood={openFoodModal}
-      />
-      <FoodSearchModal
-        open={foodModalOpen}
-        onClose={() => setFoodModalOpen(false)}
-        onLog={handleLogEntry}
-      />
-      <SettingsDrawer
-        open={settingsOpen}
-        settings={settings}
-        weights={weights}
-        onClose={() => setSettingsOpen(false)}
-        onSaveSettings={handleSaveSettings}
-        onSaveWeight={handleSaveWeight}
-      />
+      <main className="dashboard">
+        <header className="date-header">
+          <div>
+            <p className="eyebrow">Daily journal</p>
+            <h1>{dateLabel}</h1>
+          </div>
+          <div className="date-controls">
+            <button type="button" onClick={() => moveDate(-1)} aria-label="Previous day">
+              ←
+            </button>
+            <button type="button" onClick={() => moveDate(1)} aria-label="Next day">
+              →
+            </button>
+          </div>
+        </header>
+
+        {settingsOpen && <SettingsDrawer onClose={() => setSettingsOpen(false)} />}
+
+        <section className="summary-strip" aria-label="Daily metrics">
+          <Metric label="Calories remaining" value={Math.max((settings.calorie_goal || 0) - totals.calories, 0)} />
+          <Metric label="Calories consumed" value={totals.calories} />
+          <Metric label="Steps" value="—" />
+          <Metric label="Water" value={`${water.total_ml} ml`} />
+        </section>
+
+        <div className="mobile-summary">
+          <DailySummary totals={totals} settings={settings} />
+        </div>
+
+        <section className="meals-list">
+          {meals.map((meal) => (
+            <MealSection key={meal} meal={meal} entries={entries.filter((entry) => entry.meal === meal)} />
+          ))}
+        </section>
+
+        <WaterWidget />
+        <WeekChart />
+        {loading && <p className="status-line">Refreshing journal…</p>}
+      </main>
+
       {error && (
         <button className="error-toast" type="button" onClick={() => setError("")}>
           {error}
         </button>
       )}
+      {toast && <div className="success-toast">{toast}</div>}
     </div>
+  );
+}
+
+function Metric({ label, value }) {
+  return (
+    <article className="metric-chip">
+      <span>{label}</span>
+      <strong>{typeof value === "number" ? Math.round(value).toLocaleString() : value}</strong>
+    </article>
   );
 }
 

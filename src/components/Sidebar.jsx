@@ -1,35 +1,24 @@
-import CalorieRing from "./CalorieRing";
-import MacroBars from "./MacroBars";
-import "./Sidebar.css";
+import DailySummary from "@/components/DailySummary";
+import "@/styles/Sidebar.css";
 
-function Sidebar({ totals, settings, onLogFood, onOpenSettings }) {
+function Sidebar({ totals, settings, onToday, onHistory, onSettings }) {
   return (
     <aside className="sidebar">
-      <div>
-        <a className="wordmark" href="#" aria-label="Still home">
-          still<span>.</span>
-        </a>
-        <p className="sidebar-kicker">Daily health journal</p>
-      </div>
-
-      <CalorieRing calories={totals.calories} goal={settings.calorie_goal} />
-      <MacroBars totals={totals} settings={settings} />
-
-      <nav className="sidebar-nav" aria-label="Primary navigation">
-        <button className="nav-link active" type="button">
-          <span>01</span> Today
+      <a className="brand" href="#" onClick={(event) => { event.preventDefault(); onToday(); }}>
+        nourish
+      </a>
+      <nav aria-label="Primary navigation">
+        <button type="button" className="active" onClick={onToday}>
+          <span className="nav-icon today-icon" aria-hidden="true" /> Today
         </button>
-        <button className="nav-link" type="button" onClick={onLogFood}>
-          <span>02</span> Log food
+        <button type="button" onClick={onHistory}>
+          <span className="nav-icon history-icon" aria-hidden="true" /> History
         </button>
-        <button className="nav-link" type="button" onClick={onOpenSettings}>
-          <span>03</span> Settings
+        <button type="button" onClick={onSettings}>
+          <span className="nav-icon settings-icon" aria-hidden="true" /> Settings
         </button>
       </nav>
-
-      <button className="primary-button sidebar-log-button" type="button" onClick={onLogFood}>
-        Log food
-      </button>
+      <DailySummary totals={totals} settings={settings} />
     </aside>
   );
 }
