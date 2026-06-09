@@ -8,15 +8,20 @@ const GOAL_GLASSES = Math.ceil(GOAL_ML / GLASS_ML);
 
 function HydrationWidget() {
   const storageKey = `still-hydration-${toDateKey()}`;
-  const [amount, setAmount] = useState(() => Number(localStorage.getItem(storageKey)) || 0);
+  const [amount, setAmount] = useState(() =>
+    Math.min(Number(localStorage.getItem(storageKey)) || 0, GOAL_ML),
+  );
 
   useEffect(() => {
     localStorage.setItem(storageKey, amount);
   }, [amount, storageKey]);
 
-  const glasses = amount / GLASS_ML;
-  const progress = Math.min((glasses * GLASS_ML) / GOAL_ML, 1);
+  const glasses = Math.ceil(amount / GLASS_ML);
+  const progress = amount / GOAL_ML;
   const fill = `${progress * 100}%`;
+  const addGlass = () =>
+    setAmount((current) => Math.min(current + GLASS_ML, GOAL_ML));
+  const goalReached = amount >= GOAL_ML;
 
   return (
     <section className="card hydration">
@@ -30,16 +35,22 @@ function HydrationWidget() {
         <button
           className="secondary-button"
           type="button"
-          onClick={() => setAmount((current) => current + GLASS_ML)}
+          disabled={goalReached}
+          onClick={addGlass}
         >
-          + {GLASS_ML} ml
+          {goalReached ? "Gallon complete" : `+ ${GLASS_ML} ml`}
         </button>
       </div>
       <button
         className="water-vessel"
         type="button"
-        onClick={() => setAmount((current) => current + GLASS_ML)}
-        aria-label={`Add ${GLASS_ML} milliliters of water`}
+        disabled={goalReached}
+        onClick={addGlass}
+        aria-label={
+          goalReached
+            ? "One gallon hydration goal reached"
+            : `Add ${GLASS_ML} milliliters of water`
+        }
       >
         <span className="water-fill" style={{ height: fill }} />
         <span className="water-mark water-mark-one" />

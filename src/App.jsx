@@ -84,9 +84,19 @@ function App() {
   const handleLogEntry = async (entry) => {
     try {
       setError("");
-      await createEntry({ ...entry, logged_at: `${today}T12:00:00.000Z` });
+      const createdEntry = await createEntry({
+        ...entry,
+        logged_at: `${today}T12:00:00.000Z`,
+      });
+      setEntries((current) => [...current, createdEntry]);
+      setWeeklyData((current) =>
+        current.map((day) =>
+          day.date === today
+            ? { ...day, calories: day.calories + createdEntry.calories }
+            : day,
+        ),
+      );
       setFoodModalOpen(false);
-      await loadDashboard();
     } catch (entryError) {
       setError(entryError.message);
     }
