@@ -37,6 +37,7 @@ router.get("/", (request, response) => {
 });
 
 router.post("/", (request, response) => {
+  console.log("[POST /api/entries] body:", request.body);
   const { food_id, meal, quantity_g, logged_at } = request.body;
   const quantity = Number(quantity_g);
 

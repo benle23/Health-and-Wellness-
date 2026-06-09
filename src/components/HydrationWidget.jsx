@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { toDateKey } from "../date";
 import "./HydrationWidget.css";
 
-const goal = 2000;
+const GLASS_ML = 250;
+const GOAL_ML = 3785;
+const GOAL_GLASSES = Math.ceil(GOAL_ML / GLASS_ML);
 
 function HydrationWidget() {
   const storageKey = `still-hydration-${toDateKey()}`;
@@ -12,32 +14,32 @@ function HydrationWidget() {
     localStorage.setItem(storageKey, amount);
   }, [amount, storageKey]);
 
-  const fill = `${Math.min((amount / goal) * 100, 100)}%`;
+  const glasses = amount / GLASS_ML;
+  const progress = Math.min((glasses * GLASS_ML) / GOAL_ML, 1);
+  const fill = `${progress * 100}%`;
 
   return (
     <section className="card hydration">
       <div className="hydration-copy">
         <p className="eyebrow">Hydration</p>
         <p className="hydration-value">
-          {amount.toLocaleString()}
-          <span> ml</span>
+          {glasses}
+          <span> / {GOAL_GLASSES} glasses</span>
         </p>
-        <p className="hydration-note">
-          {amount >= goal ? "Daily intention met." : `${goal - amount} ml to your intention.`}
-        </p>
+        <p className="hydration-note">({amount.toLocaleString()} ml)</p>
         <button
           className="secondary-button"
           type="button"
-          onClick={() => setAmount((current) => current + 250)}
+          onClick={() => setAmount((current) => current + GLASS_ML)}
         >
-          + 250 ml
+          + {GLASS_ML} ml
         </button>
       </div>
       <button
         className="water-vessel"
         type="button"
-        onClick={() => setAmount((current) => current + 250)}
-        aria-label="Add 250 milliliters of water"
+        onClick={() => setAmount((current) => current + GLASS_ML)}
+        aria-label={`Add ${GLASS_ML} milliliters of water`}
       >
         <span className="water-fill" style={{ height: fill }} />
         <span className="water-mark water-mark-one" />
