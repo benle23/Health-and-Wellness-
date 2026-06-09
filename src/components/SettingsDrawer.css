@@ -1,0 +1,118 @@
+.drawer-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(0, 0, 0, 0.56);
+}
+
+.settings-drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(400px, 100%);
+  padding: 26px;
+  overflow-y: auto;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--surface);
+  animation: drawer-in 220ms ease-out both;
+}
+
+.settings-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.settings-header h2 {
+  margin: 7px 0 0;
+  font-family: "DM Serif Display", serif;
+  font-size: 36px;
+  font-weight: 400;
+}
+
+.settings-form {
+  display: grid;
+  gap: 26px;
+  margin-top: 30px;
+}
+
+.settings-section-label {
+  margin: 0 0 11px;
+  color: var(--muted);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.settings-field {
+  display: grid;
+  grid-template-columns: 1fr 80px 22px;
+  align-items: center;
+  min-height: 45px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+}
+
+.settings-field input {
+  height: 30px;
+  padding: 0 8px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  text-align: right;
+}
+
+.settings-field small {
+  color: var(--muted);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+  text-align: right;
+}
+
+.weight-section {
+  margin-top: 34px;
+  padding-top: 26px;
+  border-top: 1px solid var(--border);
+}
+
+.weight-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 11px;
+}
+
+.weight-form > div {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.weight-form input {
+  min-width: 0;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  background: var(--card);
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.weight-form span {
+  color: var(--muted);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9px;
+}
+
+@keyframes drawer-in {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

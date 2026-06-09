@@ -1,0 +1,62 @@
+.weekly-chart {
+  grid-area: weekly;
+  display: flex;
+  min-height: 0;
+  padding: 20px 22px 12px;
+  flex-direction: column;
+  animation-delay: 120ms;
+}
+
+.weekly-chart-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.weekly-chart .card-heading {
+  font-size: 21px;
+}
+
+.weekly-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+}
+
+.weekly-legend span {
+  width: 12px;
+  height: 1px;
+  background: rgba(240, 237, 230, 0.2);
+}
+
+.weekly-chart svg {
+  width: 100%;
+  height: 100%;
+  min-height: 100px;
+  overflow: visible;
+}
+
+.weekly-chart text {
+  fill: var(--muted);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 7px;
+  text-transform: uppercase;
+}
+
+.weekly-bar {
+  fill: rgba(240, 237, 230, 0.13);
+  transition: height 200ms ease, y 200ms ease;
+}
+
+.weekly-bar.current {
+  fill: var(--accent);
+}
+
+.goal-line {
+  stroke: rgba(240, 237, 230, 0.15);
+  stroke-dasharray: 2 4;
+  stroke-width: 1;
+}

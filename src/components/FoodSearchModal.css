@@ -1,0 +1,203 @@
+.modal-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  padding: 24px;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.food-modal {
+  display: grid;
+  grid-template-rows: auto auto minmax(120px, 1fr) auto auto;
+  width: min(680px, 100%);
+  max-height: min(720px, calc(100dvh - 48px));
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: var(--surface);
+  animation: card-in 180ms ease-out both;
+}
+
+.food-modal-header,
+.food-modal-footer,
+.quantity-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.food-modal-header h2 {
+  margin: 7px 0 0;
+  font-family: "DM Serif Display", serif;
+  font-size: 31px;
+  font-weight: 400;
+}
+
+.food-search-wrap {
+  margin-top: 22px;
+}
+
+.food-search-wrap label,
+.control-group label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.food-search-wrap input,
+.quantity-control input,
+.control-group select,
+.settings-field input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  background: var(--card);
+}
+
+.food-search-wrap input {
+  height: 46px;
+  padding: 0 14px;
+  font-family: "DM Serif Display", serif;
+  font-size: 17px;
+}
+
+.food-results {
+  min-height: 0;
+  margin: 14px 0;
+  overflow-y: auto;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.food-result {
+  display: flex;
+  width: 100%;
+  padding: 10px 8px;
+  align-items: center;
+  justify-content: space-between;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.food-result:hover,
+.food-result.selected {
+  background: var(--card);
+}
+
+.food-result.selected {
+  box-shadow: inset 2px 0 var(--accent);
+}
+
+.food-result span:last-child {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  text-align: right;
+}
+
+.food-result strong,
+.food-result small {
+  display: block;
+}
+
+.food-result strong {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.food-result small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 7px;
+}
+
+.food-log-controls {
+  display: grid;
+  grid-template-columns: 1.4fr 0.6fr;
+  gap: 12px;
+}
+
+.quantity-control {
+  gap: 8px;
+}
+
+.quantity-control input,
+.control-group select {
+  height: 38px;
+  padding: 0 10px;
+}
+
+.quantity-control input {
+  max-width: 100px;
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.unit-toggle {
+  display: flex;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+
+.unit-toggle button {
+  height: 30px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 7px;
+  color: var(--muted);
+  background: transparent;
+  font-size: 8px;
+  cursor: pointer;
+}
+
+.unit-toggle button.active {
+  color: var(--text);
+  background: rgba(240, 237, 230, 0.08);
+}
+
+.food-modal-footer {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.food-modal-footer p {
+  margin: 0;
+  color: var(--muted);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9px;
+}
+
+.food-modal-footer p span {
+  margin-right: 5px;
+  color: var(--text);
+  font-family: "DM Serif Display", serif;
+  font-size: 28px;
+}
+
+@media (max-width: 560px) {
+  .modal-layer {
+    padding: 0;
+    align-items: end;
+  }
+
+  .food-modal {
+    max-height: 92dvh;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .food-log-controls {
+    grid-template-columns: 1fr;
+  }
+}
