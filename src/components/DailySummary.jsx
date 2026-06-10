@@ -4,8 +4,8 @@ const radius = 68;
 const circumference = 2 * Math.PI * radius;
 
 function DailySummary({ totals, settings }) {
-  const goal = settings.calorie_goal || 2000;
-  const progress = Math.min(totals.calories / goal, 1);
+  const goal = settings.effective_calorie_goal ?? settings.calorie_goal ?? 2000;
+  const progress = goal > 0 ? Math.min(totals.calories / goal, 1) : Number(totals.calories > 0);
   const offset = circumference * (1 - progress);
   const macros = [
     ["Protein", totals.protein, settings.protein_goal || 150],

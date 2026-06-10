@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import CalorieAdjustment from "@/components/CalorieAdjustment";
 import DailySummary from "@/components/DailySummary";
 import MealSection from "@/components/MealSection";
 import SettingsDrawer from "@/components/SettingsDrawer";
@@ -37,6 +38,8 @@ function App() {
     month: "short",
     day: "numeric",
   })}`;
+  const effectiveCalorieGoal = settings.effective_calorie_goal ?? settings.calorie_goal ?? 0;
+  const caloriesRemaining = Math.max(effectiveCalorieGoal - totals.calories, 0);
 
   return (
     <div className="app-shell">
@@ -66,7 +69,7 @@ function App() {
         {settingsOpen && <SettingsDrawer onClose={() => setSettingsOpen(false)} />}
 
         <section className="summary-strip" aria-label="Daily metrics">
-          <Metric label="Calories remaining" value={Math.max((settings.calorie_goal || 0) - totals.calories, 0)} />
+          <CalorieAdjustment remaining={caloriesRemaining} />
           <Metric label="Calories consumed" value={totals.calories} />
           <Metric label="Protein" value={`${Math.round(totals.protein)} g`} />
           <Metric label="Water" value={`${water.total_ml} ml`} />

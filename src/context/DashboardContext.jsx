@@ -4,6 +4,7 @@ const DashboardContext = createContext(null);
 const ENTRY_KEY = "nourish.manual.entries";
 const SETTINGS_KEY = "nourish.manual.settings";
 const CALORIE_GOALS_KEY = "nourish.manual.calorie-goals";
+const CALORIE_ADJUSTMENTS_KEY = "nourish.manual.calorie-adjustments";
 const WATER_KEY = "nourish.manual.water";
 const WATER_GOAL_ML = 3785;
 const GLASS_ML = 250;
@@ -45,6 +46,9 @@ export function DashboardProvider({ children }) {
   const [calorieGoalsByDate, setCalorieGoalsByDate] = useState(() =>
     readStored(CALORIE_GOALS_KEY, {}),
   );
+  const [calorieAdjustmentsByDate, setCalorieAdjustmentsByDate] = useState(() =>
+    readStored(CALORIE_ADJUSTMENTS_KEY, {}),
+  );
   const [waterByDate, setWaterByDate] = useState(() => readStored(WATER_KEY, {}));
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
@@ -75,6 +79,17 @@ export function DashboardProvider({ children }) {
 
   useEffect(() => {
     try {
+      window.localStorage.setItem(
+        CALORIE_ADJUSTMENTS_KEY,
+        JSON.stringify(calorieAdjustmentsByDate),
+      );
+    } catch {
+      setError("Daily calorie adjustments could not be saved in this browser.");
+    }
+  }, [calorieAdjustmentsByDate]);
+
+  useEffect(() => {
+    try {
       window.localStorage.setItem(WATER_KEY, JSON.stringify(waterByDate));
     } catch {
       setError("Hydration could not be saved in this browser.");
@@ -89,8 +104,14 @@ export function DashboardProvider({ children }) {
     () => ({
       ...settings,
       calorie_goal: Number(calorieGoalsByDate[date] || settings.calorie_goal),
+      calorie_adjustment: Number(calorieAdjustmentsByDate[date] || 0),
+      effective_calorie_goal: Math.max(
+        Number(calorieGoalsByDate[date] || settings.calorie_goal) +
+          Number(calorieAdjustmentsByDate[date] || 0),
+        0,
+      ),
     }),
-    [calorieGoalsByDate, date, settings],
+    [calorieAdjustmentsByDate, calorieGoalsByDate, date, settings],
   );
 
   const totalWater = Math.min(Number(waterByDate[date] || 0), WATER_GOAL_ML);
@@ -155,6 +176,24 @@ export function DashboardProvider({ children }) {
     showToast("Goals updated");
   };
 
+  const adjustCaloriesRemaining = (amount) => {
+    const change = Number(amount);
+    if (!Number.isFinite(change) || change === 0) return;
+
+    setCalorieAdjustmentsByDate((current) => {
+      const baseGoal = Number(calorieGoalsByDate[date] || settings.calorie_goal);
+      const currentAdjustment = Number(current[date] || 0);
+      const nextAdjustment = Math.max(currentAdjustment + change, -baseGoal);
+      return { ...current, [date]: nextAdjustment };
+    });
+    showToast(`${change > 0 ? "Added" : "Removed"} ${Math.abs(change)} calories`);
+  };
+
+  const resetCaloriesRemaining = () => {
+    setCalorieAdjustmentsByDate((current) => ({ ...current, [date]: 0 }));
+    showToast("Calorie adjustment reset");
+  };
+
   const moveDate = (days) => {
     const next = new Date(`${date}T12:00:00`);
     next.setDate(next.getDate() + days);
@@ -176,6 +215,8 @@ export function DashboardProvider({ children }) {
         addWater,
         removeWater,
         updateSettings,
+        adjustCaloriesRemaining,
+        resetCaloriesRemaining,
         setError,
         setDate,
         moveDate,

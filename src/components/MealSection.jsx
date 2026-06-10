@@ -9,7 +9,8 @@ function MealSection({ meal, entries }) {
   const { settings, removeEntry } = useDashboard();
   const [searchOpen, setSearchOpen] = useState(false);
   const calories = entries.reduce((total, entry) => total + entry.calories, 0);
-  const target = Math.round((settings.calorie_goal || 2000) * mealRatios[meal]);
+  const calorieGoal = settings.effective_calorie_goal ?? settings.calorie_goal ?? 2000;
+  const target = Math.round(calorieGoal * mealRatios[meal]);
 
   return (
     <article className="meal-section">
