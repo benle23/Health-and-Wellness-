@@ -1,20 +1,13 @@
-import { api } from "@/api";
 import { useDashboard } from "@/context/DashboardContext";
 import "@/styles/WaterWidget.css";
 
 function WaterWidget() {
-  const { date, water, refetch, setError, showToast } = useDashboard();
+  const { water, addWater, showToast } = useDashboard();
   const totalGlasses = Math.ceil(water.goal_ml / 250);
 
-  const addWater = async () => {
-    try {
-      setError("");
-      const next = await api.water.add(date);
-      await refetch();
-      if (next.total_ml >= next.goal_ml) showToast("One gallon complete");
-    } catch (requestError) {
-      setError(requestError.message);
-    }
+  const logWater = () => {
+    addWater();
+    if (water.total_ml + 250 >= water.goal_ml) showToast("One gallon complete");
   };
 
   return (
@@ -33,12 +26,12 @@ function WaterWidget() {
             key={index}
             type="button"
             disabled={water.total_ml >= water.goal_ml}
-            onClick={addWater}
+            onClick={logWater}
             aria-label={water.total_ml >= water.goal_ml ? "One gallon complete" : "Add 250 milliliters"}
           />
         ))}
       </div>
-      <span>{water.glasses} / {totalGlasses} glasses</span>
+      <span>{water.glasses} / {totalGlasses} glasses ({water.total_ml.toLocaleString()} ml)</span>
     </section>
   );
 }

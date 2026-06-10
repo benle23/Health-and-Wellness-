@@ -9,8 +9,8 @@ function DailySummary({ totals, settings }) {
   const offset = circumference * (1 - progress);
   const macros = [
     ["Protein", totals.protein, settings.protein_goal || 150],
-    ["Carbs", totals.carbs, settings.carbs_goal || 200],
     ["Fat", totals.fat, settings.fat_goal || 65],
+    ["Sugar", totals.sugar, settings.sugar_goal || 50],
   ];
 
   return (

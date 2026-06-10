@@ -1,29 +1,20 @@
-import { useEffect, useState } from "react";
-import { api } from "@/api";
 import { useDashboard } from "@/context/DashboardContext";
 import "@/styles/WeekChart.css";
 
 function WeekChart() {
-  const [days, setDays] = useState([]);
-  const { date, entries } = useDashboard();
+  const { date, allEntries } = useDashboard();
 
-  useEffect(() => {
-    const dates = Array.from({ length: 7 }, (_, index) => {
-      const date = new Date();
-      date.setDate(date.getDate() - (6 - index));
-      return date.toLocaleDateString("en-CA");
-    });
-    Promise.all(dates.map((date) => api.entries.list(date)))
-      .then((results) =>
-        setDays(
-          dates.map((date, index) => ({
-            date,
-            calories: results[index].reduce((total, entry) => total + entry.calories, 0),
-          })),
-        ),
-      )
-      .catch(() => setDays([]));
-  }, [date, entries]);
+  const days = Array.from({ length: 7 }, (_, index) => {
+    const current = new Date(`${date}T12:00:00`);
+    current.setDate(current.getDate() - (6 - index));
+    const day = current.toLocaleDateString("en-CA");
+    return {
+      date: day,
+      calories: allEntries
+        .filter((entry) => entry.date === day)
+        .reduce((total, entry) => total + entry.calories, 0),
+    };
+  });
 
   const max = Math.max(...days.map((day) => day.calories), 2000);
   return (

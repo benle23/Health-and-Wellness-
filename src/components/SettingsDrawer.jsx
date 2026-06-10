@@ -1,29 +1,17 @@
 import { useEffect, useState } from "react";
-import { api } from "@/api";
 import { useDashboard } from "@/context/DashboardContext";
 import "@/styles/SettingsDrawer.css";
 
 function SettingsDrawer({ onClose }) {
-  const { settings, refetch, setError, showToast } = useDashboard();
+  const { settings, updateSettings } = useDashboard();
   const [form, setForm] = useState(settings);
-  const [busy, setBusy] = useState(false);
 
   useEffect(() => setForm(settings), [settings]);
 
-  const save = async (event) => {
+  const save = (event) => {
     event.preventDefault();
-    try {
-      setBusy(true);
-      setError("");
-      await api.settings.update(form);
-      await refetch();
-      showToast("Goals updated");
-      onClose();
-    } catch (requestError) {
-      setError(requestError.message);
-    } finally {
-      setBusy(false);
-    }
+    updateSettings(form);
+    onClose();
   };
 
   return (
@@ -39,9 +27,8 @@ function SettingsDrawer({ onClose }) {
         {[
           ["calorie_goal", "Calories", "kcal"],
           ["protein_goal", "Protein", "g"],
-          ["carbs_goal", "Carbs", "g"],
           ["fat_goal", "Fat", "g"],
-          ["water_goal_ml", "Water", "ml"],
+          ["sugar_goal", "Sugar", "g"],
         ].map(([key, label, unit]) => (
           <label key={key}>
             <span>{label}</span>
@@ -54,7 +41,7 @@ function SettingsDrawer({ onClose }) {
             <small>{unit}</small>
           </label>
         ))}
-        <button className="save-settings" type="submit" disabled={busy}>{busy ? "Saving…" : "Save goals"}</button>
+        <button className="save-settings" type="submit">Save goals</button>
       </form>
     </section>
   );

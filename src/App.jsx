@@ -11,7 +11,7 @@ import "@/styles/App.css";
 const meals = ["Breakfast", "Lunch", "Dinner", "Snacks"];
 
 function App() {
-  const { date, entries, settings, water, loading, error, toast, moveDate, setDate, setError } =
+  const { date, entries, settings, water, error, toast, moveDate, setDate, setError } =
     useDashboard();
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -21,10 +21,10 @@ function App() {
         (sum, entry) => ({
           calories: sum.calories + entry.calories,
           protein: sum.protein + entry.protein,
-          carbs: sum.carbs + entry.carbs,
           fat: sum.fat + entry.fat,
+          sugar: sum.sugar + entry.sugar,
         }),
-        { calories: 0, protein: 0, carbs: 0, fat: 0 },
+        { calories: 0, protein: 0, fat: 0, sugar: 0 },
       ),
     [entries],
   );
@@ -67,7 +67,7 @@ function App() {
         <section className="summary-strip" aria-label="Daily metrics">
           <Metric label="Calories remaining" value={Math.max((settings.calorie_goal || 0) - totals.calories, 0)} />
           <Metric label="Calories consumed" value={totals.calories} />
-          <Metric label="Steps" value="—" />
+          <Metric label="Protein" value={`${Math.round(totals.protein)} g`} />
           <Metric label="Water" value={`${water.total_ml} ml`} />
         </section>
 
@@ -83,7 +83,6 @@ function App() {
 
         <WaterWidget />
         <WeekChart />
-        {loading && <p className="status-line">Refreshing journal…</p>}
       </main>
 
       {error && (

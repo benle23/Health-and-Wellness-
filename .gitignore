@@ -8,9 +8,6 @@ build
 .env*.local
 tsconfig.tsbuildinfo
 .vercel
-health.db
-health.db-shm
-health.db-wal
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

@@ -31,7 +31,7 @@
 
 .food-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 70px 90px 28px;
+  grid-template-columns: minmax(0, 1fr) 90px 28px;
   min-height: 55px;
   padding: 8px 18px;
   align-items: center;
@@ -113,9 +113,5 @@
 @media (max-width: 600px) {
   .food-row {
     grid-template-columns: minmax(0, 1fr) 70px 28px;
-  }
-
-  .food-row > span:first-of-type {
-    display: none;
   }
 }
