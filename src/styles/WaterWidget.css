@@ -49,6 +49,11 @@
   background: var(--accent);
 }
 
+.water-glasses button.filled:hover {
+  border-color: var(--danger);
+  background: var(--danger);
+}
+
 .water-widget > span {
   color: var(--muted);
   font-family: "IBM Plex Mono", monospace;

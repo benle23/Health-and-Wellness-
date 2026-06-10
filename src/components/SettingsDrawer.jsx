@@ -19,7 +19,7 @@ function SettingsDrawer({ onClose }) {
       <header>
         <div>
           <p className="eyebrow">Daily intentions</p>
-          <h2>Settings</h2>
+          <h2>Goals for this day</h2>
         </div>
         <button type="button" onClick={onClose}>Close</button>
       </header>
@@ -27,6 +27,7 @@ function SettingsDrawer({ onClose }) {
         {[
           ["calorie_goal", "Calories", "kcal"],
           ["protein_goal", "Protein", "g"],
+          ["carbs_goal", "Carbs", "g"],
           ["fat_goal", "Fat", "g"],
           ["sugar_goal", "Sugar", "g"],
         ].map(([key, label, unit]) => (
@@ -41,6 +42,7 @@ function SettingsDrawer({ onClose }) {
             <small>{unit}</small>
           </label>
         ))}
+        <p className="daily-goal-note">Calories apply only to the selected day. Nutrient goals apply every day.</p>
         <button className="save-settings" type="submit">Save goals</button>
       </form>
     </section>

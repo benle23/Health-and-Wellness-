@@ -8,6 +8,7 @@ const emptyFood = {
   fat: "",
   sugar: "",
   protein: "",
+  carbs: "",
 };
 
 function ManualFoodEntry({ meal, onClose }) {
@@ -32,6 +33,7 @@ function ManualFoodEntry({ meal, onClose }) {
       fat: food.fat || 0,
       sugar: food.sugar || 0,
       protein: food.protein || 0,
+      carbs: food.carbs || 0,
     });
     onClose();
   };
@@ -60,9 +62,10 @@ function ManualFoodEntry({ meal, onClose }) {
       <div className="nutrition-fields">
         {[
           ["calories", "Calories", "kcal"],
+          ["protein", "Protein", "g"],
+          ["carbs", "Carbs", "g"],
           ["fat", "Fat", "g"],
           ["sugar", "Sugar", "g"],
-          ["protein", "Protein", "g"],
         ].map(([key, label, unit]) => (
           <label key={key}>
             <span>{label}</span>

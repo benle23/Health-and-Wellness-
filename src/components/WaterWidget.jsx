@@ -2,7 +2,7 @@ import { useDashboard } from "@/context/DashboardContext";
 import "@/styles/WaterWidget.css";
 
 function WaterWidget() {
-  const { water, addWater, showToast } = useDashboard();
+  const { water, addWater, removeWater, showToast } = useDashboard();
   const totalGlasses = Math.ceil(water.goal_ml / 250);
 
   const logWater = () => {
@@ -20,18 +20,21 @@ function WaterWidget() {
         <strong>{water.total_ml.toLocaleString()} / {water.goal_ml.toLocaleString()} ml</strong>
       </header>
       <div className="water-glasses">
-        {Array.from({ length: totalGlasses }, (_, index) => (
-          <button
-            className={index < water.glasses ? "filled" : ""}
-            key={index}
-            type="button"
-            disabled={water.total_ml >= water.goal_ml}
-            onClick={logWater}
-            aria-label={water.total_ml >= water.goal_ml ? "One gallon complete" : "Add 250 milliliters"}
-          />
-        ))}
+        {Array.from({ length: totalGlasses }, (_, index) => {
+          const filled = index < water.glasses;
+          return (
+            <button
+              className={filled ? "filled" : ""}
+              key={index}
+              type="button"
+              onClick={filled ? removeWater : logWater}
+              aria-label={filled ? "Remove 250 milliliters" : "Add 250 milliliters"}
+              title={filled ? "Remove one glass" : "Add one glass"}
+            />
+          );
+        })}
       </div>
-      <span>{water.glasses} / {totalGlasses} glasses ({water.total_ml.toLocaleString()} ml)</span>
+      <span>{water.glasses} / {totalGlasses} glasses ({water.total_ml.toLocaleString()} ml) · tap a filled glass to remove</span>
     </section>
   );
 }

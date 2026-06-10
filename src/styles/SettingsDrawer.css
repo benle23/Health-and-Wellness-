@@ -21,7 +21,7 @@
 
 .settings-drawer form {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 8px;
   margin-top: 18px;
 }
@@ -69,6 +69,13 @@
   font-weight: 600;
   text-transform: uppercase;
   cursor: pointer;
+}
+
+.daily-goal-note {
+  grid-column: 1 / -1;
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 8px;
 }
 
 @media (max-width: 700px) {

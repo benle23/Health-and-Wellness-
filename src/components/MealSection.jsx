@@ -23,7 +23,7 @@ function MealSection({ meal, entries }) {
             <div className="food-row" key={entry.id}>
               <div>
                 <strong>{entry.name}</strong>
-                <span>P {entry.protein}g · F {entry.fat}g · S {entry.sugar}g</span>
+                <span>P {entry.protein}g · C {entry.carbs || 0}g · F {entry.fat}g · S {entry.sugar}g</span>
               </div>
               <span>{Math.round(entry.calories)} kcal</span>
               <button type="button" onClick={() => removeEntry(entry.id)} aria-label={`Remove ${entry.name}`}>×</button>

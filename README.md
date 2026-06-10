@@ -4,11 +4,11 @@ nourish is a manual calorie and health journal. It runs entirely in the browser 
 
 ## Features
 
-- Manual food logging for calories, fat, sugar, and protein
+- Manual food logging for calories, protein, carbs, fat, and sugar
 - Breakfast, lunch, dinner, and snacks grouped by day
 - Live calorie ring, nutrient bars, meal totals, and seven-day trend
-- One-gallon hydration tracker capped at 3,785 ml
-- Adjustable calorie and nutrient goals
+- Reversible one-gallon hydration tracker capped at 3,785 ml
+- Date-specific calorie goals and adjustable nutrient goals
 - Browser-local persistence with no account, API, or database
 
 ## Run Locally

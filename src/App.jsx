@@ -21,10 +21,11 @@ function App() {
         (sum, entry) => ({
           calories: sum.calories + entry.calories,
           protein: sum.protein + entry.protein,
+          carbs: sum.carbs + Number(entry.carbs || 0),
           fat: sum.fat + entry.fat,
           sugar: sum.sugar + entry.sugar,
         }),
-        { calories: 0, protein: 0, fat: 0, sugar: 0 },
+        { calories: 0, protein: 0, carbs: 0, fat: 0, sugar: 0 },
       ),
     [entries],
   );

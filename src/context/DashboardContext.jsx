@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 const DashboardContext = createContext(null);
 const ENTRY_KEY = "nourish.manual.entries";
 const SETTINGS_KEY = "nourish.manual.settings";
+const CALORIE_GOALS_KEY = "nourish.manual.calorie-goals";
 const WATER_KEY = "nourish.manual.water";
 const WATER_GOAL_ML = 3785;
 const GLASS_ML = 250;
@@ -10,6 +11,7 @@ const GLASS_ML = 250;
 const defaultSettings = {
   calorie_goal: 2000,
   protein_goal: 150,
+  carbs_goal: 200,
   fat_goal: 65,
   sugar_goal: 50,
 };
@@ -40,6 +42,9 @@ export function DashboardProvider({ children }) {
     ...defaultSettings,
     ...readStored(SETTINGS_KEY, {}),
   }));
+  const [calorieGoalsByDate, setCalorieGoalsByDate] = useState(() =>
+    readStored(CALORIE_GOALS_KEY, {}),
+  );
   const [waterByDate, setWaterByDate] = useState(() => readStored(WATER_KEY, {}));
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
@@ -62,6 +67,14 @@ export function DashboardProvider({ children }) {
 
   useEffect(() => {
     try {
+      window.localStorage.setItem(CALORIE_GOALS_KEY, JSON.stringify(calorieGoalsByDate));
+    } catch {
+      setError("Daily calorie goals could not be saved in this browser.");
+    }
+  }, [calorieGoalsByDate]);
+
+  useEffect(() => {
+    try {
       window.localStorage.setItem(WATER_KEY, JSON.stringify(waterByDate));
     } catch {
       setError("Hydration could not be saved in this browser.");
@@ -71,6 +84,13 @@ export function DashboardProvider({ children }) {
   const entries = useMemo(
     () => allEntries.filter((entry) => entry.date === date),
     [allEntries, date],
+  );
+  const currentSettings = useMemo(
+    () => ({
+      ...settings,
+      calorie_goal: Number(calorieGoalsByDate[date] || settings.calorie_goal),
+    }),
+    [calorieGoalsByDate, date, settings],
   );
 
   const totalWater = Math.min(Number(waterByDate[date] || 0), WATER_GOAL_ML);
@@ -93,6 +113,7 @@ export function DashboardProvider({ children }) {
       name: entry.name.trim(),
       calories: Number(entry.calories),
       protein: Number(entry.protein),
+      carbs: Number(entry.carbs),
       fat: Number(entry.fat),
       sugar: Number(entry.sugar),
     };
@@ -112,13 +133,25 @@ export function DashboardProvider({ children }) {
     }));
   };
 
+  const removeWater = () => {
+    setWaterByDate((current) => ({
+      ...current,
+      [date]: Math.max(Number(current[date] || 0) - GLASS_ML, 0),
+    }));
+  };
+
   const updateSettings = (nextSettings) => {
-    setSettings({
-      calorie_goal: Number(nextSettings.calorie_goal),
+    setSettings((current) => ({
+      ...current,
       protein_goal: Number(nextSettings.protein_goal),
+      carbs_goal: Number(nextSettings.carbs_goal),
       fat_goal: Number(nextSettings.fat_goal),
       sugar_goal: Number(nextSettings.sugar_goal),
-    });
+    }));
+    setCalorieGoalsByDate((current) => ({
+      ...current,
+      [date]: Number(nextSettings.calorie_goal),
+    }));
     showToast("Goals updated");
   };
 
@@ -134,13 +167,14 @@ export function DashboardProvider({ children }) {
         date,
         entries,
         allEntries,
-        settings,
+        settings: currentSettings,
         water,
         error,
         toast,
         addEntry,
         removeEntry,
         addWater,
+        removeWater,
         updateSettings,
         setError,
         setDate,
